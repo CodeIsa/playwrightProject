@@ -1,27 +1,39 @@
-class LandingPage {
+const { expect } = require('@playwright/test');
+
+export class LandingPage {
+
+    constructor(page) {
+        this.page = page
+    }
+
     async visit() {
-        await page.goto('http://localhost:3000')
+        await this.page.goto('http://localhost:3000')
     }
 
     async openLeadModal() {
-        await page.getByRole('button', {name: /Aperte o play/}).click()
+        await this.page.getByRole('button', {name: /Aperte o play/}).click()
 
         await expect(
-          page.getByTestId('modal').getByRole('heading')
+          this.page.getByTestId('modal').getByRole('heading')
         ).toHaveText('Fila de espera')
     }
 
-    async submitLeadForm() {
-        await page.getByPlaceholder('Informe seu nome').fill('Isabelle')
-        await page.getByPlaceholder('Informe seu email').fill('Isabelle@gmail.com')
+    async submitLeadForm(name, email) {
+        await this.page.getByPlaceholder('Informe seu nome').fill(name)
+        await this.page.getByPlaceholder('Informe seu email').fill(email)
         
-        await page.getByTestId('modal')
+        await this.page.getByTestId('modal')
           .getByText('Quero entrar na fila!').click()
     }
 
-    async toastHaveText() {
-        const message = 'Agradecemos por compartilhar seus dados conosco. Em breve, nossa equipe entrará em contato!' 
-        await expect(page.locator('.toast')).toHaveText(message)
-        await expect(page.locator('.toast')).toBeHidden({timeout: 5000})
+    async toastHaveText(message) {
+        const toast = this.page.locator('.toast')
+
+        await expect(toast).toHaveText(message)
+        await expect(toast).toBeHidden({timeout: 5000})
+    }
+
+    async alertHaveText(target) {
+        await expect(this.page.locator('.alert')).toHaveText(target)
     }
 }
