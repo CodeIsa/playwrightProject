@@ -19,8 +19,11 @@ export class LoginPage {
         await this.page.getByText('Entrar').click();
     }
 
-    async isLoggedIn() {
-        await this.page.waitForLoadState('networkidle');
-        await expect(this.page).toHaveURL('/.*admin/');
+    async alertHaveText(text) {
+        //com a expressão regular $=, estamos buscando um elemento que 
+        // tenha a classe que termina com alert
+        const alert = this.page.locator('span[class$=alert]');
+        await expect(alert).toHaveText(text);
     }
+
 }
